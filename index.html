@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ironhawks Home Games</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600;700;800;900&family=Barlow:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: navy rink-board header with red/blue line markings, a featured "next game" faceoff block, then month-grouped game rows */
+:root{
+  --navy:#0d2449; --navy-2:#163668; --red:#c8102e; --red-hi:#e0213f; --steel:#8b97a8; --ice:#eef2f7;
+  --bg:#eef2f7; --surface:#ffffff; --ink:#0d1b33; --muted:#566377; --line:#d3dae4;
+  --chip:#e2e8f1; --date-bg:#0d2449; --date-ink:#ffffff;
+  --display:"Saira Condensed","Arial Narrow",Impact,sans-serif;
+  --body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#081428; --surface:#0f203d; --ink:#eaf0f8; --muted:#9aa8bc; --line:#1f3457;
+  --chip:#1a2e50; --date-bg:#c8102e; --date-ink:#ffffff; --red-hi:#ff3150; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#081428; --surface:#0f203d; --ink:#eaf0f8; --muted:#9aa8bc; --line:#1f3457;
+  --chip:#1a2e50; --date-bg:#c8102e; --date-ink:#ffffff; --red-hi:#ff3150; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45}
+.wrap{max-width:880px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* Header: rink boards. Red center line, blue lines, faceoff circle */
+header{position:relative;overflow:hidden;color:#fff;background:
+  radial-gradient(circle at 88% 50%, transparent 0 118px, rgba(200,16,46,.55) 119px 123px, transparent 124px),
+  radial-gradient(circle at 88% 50%, rgba(200,16,46,.6) 0 7px, transparent 8px),
+  linear-gradient(90deg, transparent 0 62%, rgba(255,255,255,.07) 62% 64%, transparent 64%),
+  linear-gradient(160deg,var(--navy-2),var(--navy) 70%)}
+header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:10px;
+  background:linear-gradient(90deg,var(--red) 0 33.3%,#fff 33.3% 36%,var(--steel) 36% 64%,#fff 64% 66.7%,var(--red) 66.7%)}
+header .wrap{position:relative;padding-block:34px 40px;display:grid;gap:12px}
+.season{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:15px;letter-spacing:.18em;text-transform:uppercase;color:#c9d3e2}
+.season b{background:var(--red);color:#fff;padding:3px 8px;letter-spacing:.12em;transform:skewX(-10deg);display:inline-block}
+h1{margin:0;font-family:var(--display);font-weight:900;font-style:italic;text-transform:uppercase;line-height:.88;letter-spacing:.005em;font-size:clamp(46px,10vw,88px);text-wrap:balance}
+h1 .red{color:var(--red-hi);display:block}
+.venue{margin:4px 0 0;color:#c9d3e2;font-weight:500}
+.venue strong{color:#fff;font-weight:700}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;font:700 14px/1 var(--body);letter-spacing:.02em;padding:11px 14px;border-radius:4px;text-decoration:none;border:2px solid var(--line);color:var(--ink);background:var(--surface);cursor:pointer;white-space:nowrap}
+.btn svg{width:16px;height:16px;flex:none}
+.btn:hover{border-color:var(--ink)}
+.btn:focus-visible{outline:3px solid var(--red-hi);outline-offset:2px}
+.btn.red{background:var(--red);border-color:var(--red);color:#fff}
+.btn.red:hover{background:var(--red-hi);border-color:var(--red-hi)}
+.btn.on-dark{background:transparent;color:#fff;border-color:rgba(255,255,255,.45)}
+.btn.on-dark:hover{border-color:#fff}
+.btn[disabled]{opacity:.6;cursor:progress}
+
+/* Next game feature */
+.next{margin-top:-18px;position:relative;z-index:1;background:var(--surface);border:2px solid var(--navy);border-radius:6px;display:grid;grid-template-columns:auto 1fr;overflow:hidden}
+.next .tag{writing-mode:vertical-rl;transform:rotate(180deg);background:var(--red);color:#fff;font-family:var(--display);font-weight:800;letter-spacing:.2em;text-transform:uppercase;font-size:13px;padding:14px 8px;text-align:center}
+.next .body{padding:16px 18px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px}
+.next .when{font-family:var(--display);font-weight:700;font-size:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--red-hi)}
+.next .who{font-family:var(--display);font-weight:900;font-style:italic;font-size:clamp(28px,5vw,38px);line-height:1;text-transform:uppercase}
+.next .who small{font-style:normal;font-weight:700;font-size:.55em;color:var(--muted);margin-right:6px}
+.next .info{min-width:0}
+
+.controls{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding-block:24px 0}
+.count{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.1em;font-size:16px}
+.count span{color:var(--red-hi)}
+.toggle{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted);font-weight:500}
+.toggle input{accent-color:var(--red);width:18px;height:18px}
+
+main{padding-bottom:40px}
+.month{margin-top:28px}
+.month h2{margin:0 0 12px;display:flex;align-items:center;gap:12px;font-family:var(--display);font-weight:900;font-style:italic;font-size:28px;text-transform:uppercase;letter-spacing:.02em;line-height:1}
+.month h2::after{content:"";flex:1;height:3px;background:linear-gradient(90deg,var(--red) 0 48px,var(--line) 48px)}
+.month h2 span{font-style:normal;font-weight:700;font-size:15px;color:var(--muted);letter-spacing:.08em}
+.games{display:grid;gap:8px;list-style:none;margin:0;padding:0}
+.game{display:grid;grid-template-columns:70px 1fr auto;gap:16px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:10px 12px 10px 10px}
+.date{background:var(--date-bg);color:var(--date-ink);border-radius:4px;text-align:center;padding:8px 4px 7px;font-family:var(--display);line-height:1}
+.date .dow{font-weight:800;font-size:13px;letter-spacing:.14em;text-transform:uppercase;opacity:.8}
+.date .day{font-weight:900;font-style:italic;font-size:32px;margin-top:2px;font-variant-numeric:tabular-nums}
+.info{min-width:0}
+.opp{font-family:var(--display);font-weight:800;font-size:23px;line-height:1.05;text-transform:uppercase;letter-spacing:.01em}
+.opp small{font-family:var(--body);font-weight:600;font-size:13px;color:var(--muted);text-transform:none;margin-right:5px}
+.meta{color:var(--muted);font-size:14px;margin-top:4px;font-weight:500;font-variant-numeric:tabular-nums;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
+.meta .time{color:var(--ink);font-weight:700}
+.pill{font:700 11px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;padding:4px 7px;border-radius:3px;background:var(--chip);color:var(--ink)}
+.pill.win{background:var(--red);color:#fff}
+.actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.game.past{opacity:.62}
+.game.past .actions{display:none}
+.game.is-next{border-color:var(--red)}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--navy);color:#fff;border-left:4px solid var(--red);padding:12px 16px;border-radius:4px;font-weight:600;font-size:14px;max-width:calc(100% - 32px);box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:20}
+
+footer{color:var(--muted);font-size:13px;padding-block:6px 32px;border-top:1px solid var(--line)}
+footer p{margin:12px 0 0;max-width:68ch}
+footer a{color:inherit}
+
+@media (max-width:640px){
+  header{background:
+    radial-gradient(circle at 100% 30%, transparent 0 90px, rgba(200,16,46,.5) 91px 94px, transparent 95px),
+    linear-gradient(160deg,var(--navy-2),var(--navy) 70%)}
+  .game{grid-template-columns:58px 1fr;gap:12px}
+  .actions{grid-column:1 / -1}
+  .actions .btn{flex:1 1 0}
+  .date .day{font-size:28px}
+  .next .body{padding:14px}
+  .next .body .actions{width:100%}
+}
+@media (prefers-reduced-motion:no-preference){.btn{transition:border-color .15s,background .15s}}
+</style>
+
+</head><body>
+<header>
+  <div class="wrap">
+    <div class="season"><b>2026–27</b> Home schedule</div>
+    <h1>Trenton <span class="red">Ironhawks</span></h1>
+    <p class="venue"><strong>CURE Insurance Arena</strong> · 10 Hamilton Avenue, Trenton, NJ · All times Eastern</p>
+    <div class="actions" style="justify-content:flex-start;margin-top:6px">
+      <button class="btn red" type="button" id="allIcal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M12 13v5M9.5 15.5h5"/></svg>Add all home games to iCal</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="nextSlot"></div>
+  <div class="controls">
+    <div class="count" id="count"></div>
+    <label class="toggle" for="showPast"><input type="checkbox" id="showPast"> Show past games</label>
+  </div>
+  <div id="schedule"></div>
+</main>
+
+<footer class="wrap">
+  <p id="icalHelp"></p>
+  <p>Google adds the game to Google Calendar in one click. Each game is blocked out for 2½ hours. Schedule from <a href="https://trentonironhawks.com/ironhawks-schedule" target="_blank" rel="noopener">trentonironhawks.com</a>. Check there for changes.</p>
+</footer>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const GAMES = [{"id": "2026-10-24", "short": "Adirondack", "full": "Adirondack Thunder", "start": "20261024T180000", "end": "20261024T203000"}, {"id": "2026-10-31", "short": "Adirondack", "full": "Adirondack Thunder", "start": "20261031T180000", "end": "20261031T203000"}, {"id": "2026-11-06", "short": "Wheeling", "full": "Wheeling Nailers", "start": "20261106T190000", "end": "20261106T213000"}, {"id": "2026-11-11", "short": "Reading", "full": "Reading Royals", "start": "20261111T190000", "end": "20261111T213000"}, {"id": "2026-11-25", "short": "Reading", "full": "Reading Royals", "start": "20261125T190000", "end": "20261125T213000"}, {"id": "2026-11-27", "short": "Trois-Rivières", "full": "Trois-Rivières Lions", "start": "20261127T190000", "end": "20261127T213000"}, {"id": "2026-11-29", "short": "Reading", "full": "Reading Royals", "start": "20261129T150000", "end": "20261129T173000"}, {"id": "2026-12-04", "short": "Norfolk", "full": "Norfolk Admirals", "start": "20261204T190000", "end": "20261204T213000"}, {"id": "2026-12-05", "short": "Norfolk", "full": "Norfolk Admirals", "start": "20261205T180000", "end": "20261205T203000"}, {"id": "2026-12-06", "short": "Norfolk", "full": "Norfolk Admirals", "start": "20261206T150000", "end": "20261206T173000"}, {"id": "2026-12-10", "short": "Trois-Rivières", "full": "Trois-Rivières Lions", "start": "20261210T190000", "end": "20261210T213000"}, {"id": "2026-12-11", "short": "Trois-Rivières", "full": "Trois-Rivières Lions", "start": "20261211T190000", "end": "20261211T213000"}, {"id": "2026-12-13", "short": "Reading", "full": "Reading Royals", "start": "20261213T150000", "end": "20261213T173000"}, {"id": "2026-12-16", "short": "Reading", "full": "Reading Royals", "start": "20261216T190000", "end": "20261216T213000"}, {"id": "2026-12-26", "short": "Worcester", "full": "Worcester Railers", "start": "20261226T180000", "end": "20261226T203000"}, {"id": "2026-12-29", "short": "Greensboro", "full": "Greensboro Gargoyles", "start": "20261229T190000", "end": "20261229T213000"}, {"id": "2027-01-02", "short": "Trois-Rivières", "full": "Trois-Rivières Lions", "start": "20270102T180000", "end": "20270102T203000"}, {"id": "2027-01-03", "short": "Trois-Rivières", "full": "Trois-Rivières Lions", "start": "20270103T150000", "end": "20270103T173000"}, {"id": "2027-01-12", "short": "Reading", "full": "Reading Royals", "start": "20270112T190000", "end": "20270112T213000"}, {"id": "2027-01-15", "short": "Adirondack", "full": "Adirondack Thunder", "start": "20270115T190000", "end": "20270115T213000"}, {"id": "2027-01-16", "short": "Greensboro", "full": "Greensboro Gargoyles", "start": "20270116T180000", "end": "20270116T203000"}, {"id": "2027-01-17", "short": "Greensboro", "full": "Greensboro Gargoyles", "start": "20270117T150000", "end": "20270117T173000"}, {"id": "2027-01-22", "short": "Maine", "full": "Maine Mariners", "start": "20270122T190000", "end": "20270122T213000"}, {"id": "2027-01-23", "short": "Maine", "full": "Maine Mariners", "start": "20270123T180000", "end": "20270123T203000"}, {"id": "2027-01-24", "short": "Maine", "full": "Maine Mariners", "start": "20270124T150000", "end": "20270124T173000"}, {"id": "2027-02-19", "short": "Greenville", "full": "Greenville Swamp Rabbits", "start": "20270219T190000", "end": "20270219T213000"}, {"id": "2027-02-20", "short": "Greenville", "full": "Greenville Swamp Rabbits", "start": "20270220T180000", "end": "20270220T203000"}, {"id": "2027-02-21", "short": "Greenville", "full": "Greenville Swamp Rabbits", "start": "20270221T150000", "end": "20270221T173000"}, {"id": "2027-02-25", "short": "Kalamazoo", "full": "Kalamazoo Wings", "start": "20270225T103000", "end": "20270225T130000"}, {"id": "2027-02-27", "short": "Maine", "full": "Maine Mariners", "start": "20270227T180000", "end": "20270227T203000"}, {"id": "2027-02-28", "short": "Maine", "full": "Maine Mariners", "start": "20270228T150000", "end": "20270228T173000"}, {"id": "2027-03-05", "short": "Wheeling", "full": "Wheeling Nailers", "start": "20270305T190000", "end": "20270305T213000"}, {"id": "2027-03-06", "short": "Wheeling", "full": "Wheeling Nailers", "start": "20270306T180000", "end": "20270306T203000"}, {"id": "2027-03-07", "short": "Wheeling", "full": "Wheeling Nailers", "start": "20270307T150000", "end": "20270307T173000"}, {"id": "2027-04-03", "short": "Worcester", "full": "Worcester Railers", "start": "20270403T180000", "end": "20270403T203000"}, {"id": "2027-04-04", "short": "Worcester", "full": "Worcester Railers", "start": "20270404T150000", "end": "20270404T173000"}];
+const MODE = "file"; // "file" = direct .ics download, "artifact" = saved through the viewer as a .zip
+const LOC = "CURE Insurance Arena, 10 Hamilton Avenue, Trenton, NJ 08611";
+const RESULTS = {"2026-10-24":"W 4–1"};
+const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const DOW=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const ICON_CAL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M12 13v5M9.5 15.5h5"/></svg>';
+const ICON_G='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 12.2c0-.6-.1-1.2-.2-1.7H12v3.3h4.5a3.9 3.9 0 0 1-1.7 2.5v2h2.7c1.6-1.5 2.5-3.6 2.5-6.1Z"/><path d="M12 20c2.3 0 4.2-.8 5.5-2.1l-2.7-2a5 5 0 0 1-7.5-2.6H4.6v2.1A8 8 0 0 0 12 20Z"/><path d="M7.3 13.3a4.8 4.8 0 0 1 0-3.1V8.1H4.6a8 8 0 0 0 0 7.3l2.7-2.1Z"/><path d="M12 7.2c1.3 0 2.4.4 3.3 1.3l2.4-2.4A8 8 0 0 0 4.6 8.1l2.7 2.1A4.8 4.8 0 0 1 12 7.2Z"/></svg>';
+
+function parts(s){return {y:+s.slice(0,4),m:+s.slice(4,6)-1,d:+s.slice(6,8),h:+s.slice(9,11),min:+s.slice(11,13)}}
+function timeStr(p){const h=p.h%12||12;return h+":"+String(p.min).padStart(2,"0")+(p.h<12?" AM":" PM")}
+function todayKey(){const n=new Date();return n.getFullYear()+"-"+String(n.getMonth()+1).padStart(2,"0")+"-"+String(n.getDate()).padStart(2,"0")}
+function gcal(g){
+  const q=new URLSearchParams({action:"TEMPLATE",text:"Ironhawks vs. "+g.full,dates:g.start+"/"+g.end,ctz:"America/New_York",location:LOC,details:"Trenton Ironhawks home game at CURE Insurance Arena."});
+  return "https://calendar.google.com/calendar/render?"+q.toString();
+}
+const TZ=["BEGIN:VTIMEZONE","TZID:America/New_York","BEGIN:DAYLIGHT","TZOFFSETFROM:-0500","TZOFFSETTO:-0400","TZNAME:EDT","DTSTART:19700308T020000","RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU","END:DAYLIGHT","BEGIN:STANDARD","TZOFFSETFROM:-0400","TZOFFSETTO:-0500","TZNAME:EST","DTSTART:19701101T020000","RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU","END:STANDARD","END:VTIMEZONE"];
+function icsText(list){
+  const L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Ironhawks Home Games//EN","CALSCALE:GREGORIAN","METHOD:PUBLISH","X-WR-CALNAME:Ironhawks Home Games",...TZ];
+  for(const g of list)L.push("BEGIN:VEVENT","UID:ironhawks-home-"+g.id+"@ironhawks-schedule","DTSTAMP:20261026T140000Z","DTSTART;TZID=America/New_York:"+g.start,"DTEND;TZID=America/New_York:"+g.end,"SUMMARY:Ironhawks vs. "+g.full,"LOCATION:"+LOC.replace(/,/g,"\\,"),"DESCRIPTION:Trenton Ironhawks home game at CURE Insurance Arena.","END:VEVENT");
+  L.push("END:VCALENDAR");
+  return L.join("\r\n")+"\r\n";
+}
+// Minimal store-only ZIP so the viewer can save the .ics through the artifact viewer
+const CRC=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+function crc32(b){let c=0xFFFFFFFF;for(let i=0;i<b.length;i++)c=CRC[(c^b[i])&255]^(c>>>8);return (c^0xFFFFFFFF)>>>0}
+function zipOne(name,text){
+  const enc=new TextEncoder(),nb=enc.encode(name),db=enc.encode(text),crc=crc32(db);
+  const lh=new DataView(new ArrayBuffer(30));
+  [[0,0x04034b50,4],[4,20,2],[6,0,2],[8,0,2],[10,0,2],[12,0x21,2],[14,crc,4],[18,db.length,4],[22,db.length,4],[26,nb.length,2],[28,0,2]].forEach(([o,v,s])=>s===4?lh.setUint32(o,v,true):lh.setUint16(o,v,true));
+  const cd=new DataView(new ArrayBuffer(46));
+  [[0,0x02014b50,4],[4,20,2],[6,20,2],[8,0,2],[10,0,2],[12,0,2],[14,0x21,2],[16,crc,4],[20,db.length,4],[24,db.length,4],[28,nb.length,2],[30,0,2],[32,0,2],[34,0,2],[36,0,2],[38,0,4],[42,0,4]].forEach(([o,v,s])=>s===4?cd.setUint32(o,v,true):cd.setUint16(o,v,true));
+  const cdOff=30+nb.length+db.length,cdLen=46+nb.length;
+  const end=new DataView(new ArrayBuffer(22));
+  [[0,0x06054b50,4],[4,0,2],[6,0,2],[8,1,2],[10,1,2],[12,cdLen,4],[16,cdOff,4],[20,0,2]].forEach(([o,v,s])=>s===4?end.setUint32(o,v,true):end.setUint16(o,v,true));
+  return new Blob([lh,nb,db,cd,nb,end],{type:"application/zip"});
+}
+let toastTimer;
+function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.hidden=true,4500)}
+let downloadsP=null;
+if(MODE==="artifact"&&window.claude&&window.claude.use){downloadsP=window.claude.use("downloads")}
+async function addIcal(list,base,btn){
+  const text=icsText(list);
+  if(MODE==="file"){
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(new Blob([text],{type:"text/calendar"}));a.download=base+".ics";
+    document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+    return;
+  }
+  const downloads=downloadsP?await downloadsP:null;
+  if(!downloads){toast("Saving calendar files isn't available in this view. Use the Google button instead.");return}
+  if(btn)btn.disabled=true;
+  try{
+    await downloads.save({filename:base+".zip",data:zipOne(base+".ics",text)});
+    toast("Saved. Open the .zip, then open the .ics file inside to add it to your calendar.");
+  }catch(e){
+    const c=e&&e.code;
+    if(c==="declined"){}
+    else if(c==="rate_limited")toast("A save is already open. Finish that one first.");
+    else toast("Couldn't save the calendar file here. Use the Google button instead.");
+  }finally{if(btn)btn.disabled=false}
+}
+
+function gameActions(g){
+  return '<div class="actions">'
+    +'<a class="btn" href="'+gcal(g)+'" target="_blank" rel="noopener">'+ICON_G+'Google</a>'
+    +'<button class="btn red" type="button" data-ical="'+g.id+'">'+ICON_CAL+'iCal</button>'
+    +'</div>';
+}
+function render(){
+  const showPast=document.getElementById("showPast").checked;
+  const today=todayKey();
+  const upcoming=GAMES.filter(g=>g.id>=today);
+  const list=showPast?GAMES:upcoming;
+  const next=upcoming[0];
+  document.getElementById("count").innerHTML='<span>'+upcoming.length+'</span> home games left · '+GAMES.length+' this season';
+  // Next game feature
+  const slot=document.getElementById("nextSlot");
+  if(next){
+    const p=parts(next.start);const dow=new Date(p.y,p.m,p.d).toLocaleDateString("en-US",{weekday:"long"});
+    slot.innerHTML='<section class="next" aria-label="Next home game"><div class="tag">Next game</div><div class="body"><div class="info">'
+      +'<div class="when">'+dow+', '+MONTHS[p.m]+' '+p.d+' · '+timeStr(p)+'</div>'
+      +'<div class="who"><small>vs.</small>'+next.full+'</div></div>'+gameActions(next)+'</div></section>';
+  }else slot.innerHTML="";
+  const byMonth=new Map();
+  for(const g of list){const p=parts(g.start);const k=p.y+"-"+p.m;if(!byMonth.has(k))byMonth.set(k,{p,games:[]});byMonth.get(k).games.push(g)}
+  let html="";
+  for(const {p,games} of byMonth.values()){
+    html+='<section class="month"><h2>'+MONTHS[p.m]+' <span>'+p.y+' · '+games.length+(games.length===1?' game':' games')+'</span></h2><ul class="games">';
+    for(const g of games){
+      const q=parts(g.start);const dow=DOW[new Date(q.y,q.m,q.d).getDay()];
+      const past=g.id<today;
+      const res=past&&RESULTS[g.id]?'<span class="pill win">'+RESULTS[g.id]+'</span>':(past?'<span class="pill">Final</span>':'');
+      html+='<li class="game'+(past?' past':'')+(next&&g.id===next.id?' is-next':'')+'">'
+        +'<div class="date"><div class="dow">'+dow+'</div><div class="day">'+q.d+'</div></div>'
+        +'<div class="info"><div class="opp"><small>vs.</small>'+g.full+'</div>'
+        +'<div class="meta"><span>'+MONTHS[q.m].slice(0,3)+' '+q.d+'</span><span class="time">'+timeStr(q)+'</span>'+res+'</div></div>'
+        +(past?'':gameActions(g))+'</li>';
+    }
+    html+='</ul></section>';
+  }
+  document.getElementById("schedule").innerHTML=html;
+}
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-ical]");if(!b)return;
+  const g=GAMES.find(x=>x.id===b.dataset.ical);
+  addIcal([g],"ironhawks-vs-"+g.short.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z]+/g,"-")+"-"+g.id,b);
+});
+document.getElementById("allIcal").addEventListener("click",e=>{
+  addIcal(GAMES.filter(g=>g.id>=todayKey()),"ironhawks-home-games",e.currentTarget);
+});
+document.getElementById("icalHelp").textContent = MODE==="file"
+  ? "iCal downloads a calendar file. Open it to add the game to Apple Calendar or Outlook."
+  : "iCal saves a small .zip with the calendar file inside. Open the .zip, then open the .ics file to add the game to Apple Calendar or Outlook.";
+const cb=document.getElementById("showPast");
+try{cb.checked=localStorage.getItem("showPast")==="1"}catch(e){}
+cb.addEventListener("change",()=>{try{localStorage.setItem("showPast",cb.checked?"1":"0")}catch(e){}render()});
+render();
+</script>
+
+</body></html>
